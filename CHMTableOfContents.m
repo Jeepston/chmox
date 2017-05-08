@@ -26,6 +26,12 @@
 
 #include <libxml/HTMLparser.h>
 
+@interface CHMTableOfContents () {
+    NSMutableArray *_rootTopics;
+}
+
+@end
+
 @implementation CHMTableOfContents
 
 typedef struct {
@@ -78,7 +84,7 @@ static htmlSAXHandler saxHandler = {
 
 #pragma mark Lifecycle
 
-- (id)initWithContainer:(CHMContainer *)container
+- (instancetype)initWithContainer:(CHMContainer *)container
 {
     if( self = [super init] ) {
 	_rootTopics = [[NSMutableArray alloc] init];
@@ -93,9 +99,9 @@ static htmlSAXHandler saxHandler = {
 	
 	// XML_CHAR_ENCODING_NONE / XML_CHAR_ENCODING_UTF8 / XML_CHAR_ENCODING_8859_1
 	htmlParserCtxtPtr parser = htmlCreatePushParserCtxt( &saxHandler, &context,
-							     [tocData bytes], [tocData length],
+							     tocData.bytes, (int)tocData.length,
 							     NULL, XML_CHAR_ENCODING_8859_1 );
-	htmlParseChunk( parser, [tocData bytes], 0, 1 );
+	htmlParseChunk( parser, tocData.bytes, 0, 1 );
 	[context.topicStack release];
 
 	htmlDocPtr doc = parser->myDoc;
@@ -206,8 +212,8 @@ static void elementDidEnd( TOCBuilderContext *context, const xmlChar *name )
 //        DEBUG_OUTPUT( @"Stack BEFORE %@", context->topicStack );
 
 	// Closing depth level
-	if( [context->topicStack count] > 0 ) {
-            context->lastTopic = [context->topicStack objectAtIndex:[context->topicStack count] - 1];
+	if( context->topicStack.count > 0 ) {
+            context->lastTopic = context->topicStack[context->topicStack.count - 1];
 	    [context->topicStack removeLastObject];
 
             if( context->lastTopic == context->placeholder ) {
@@ -236,11 +242,11 @@ static void createNewTopic( TOCBuilderContext *context )
     context->name = nil;
     context->path = nil;
     
-    NSInteger level = [context->topicStack count];
+    NSInteger level = context->topicStack.count;
     
     // Add topic to its parent
     while( --level >= 0 ) {
-        CHMTopic *parent = [context->topicStack objectAtIndex:level];
+        CHMTopic *parent = context->topicStack[level];
 
         if( parent != context->placeholder ) {
             DEBUG_OUTPUT( @"createNewTopic: %@, %ld", context->lastTopic, (long)level );
@@ -259,7 +265,7 @@ static void createNewTopic( TOCBuilderContext *context )
 - (NSInteger)outlineView:(NSOutlineView *)outlineView
     numberOfChildrenOfItem:(id)item
 {
-    return item? [item countOfSubTopics] : [_rootTopics count];
+    return item? [item countOfSubTopics] : _rootTopics.count;
 }
 
 - (BOOL)outlineView:(NSOutlineView *)outlineView
@@ -272,7 +278,7 @@ static void createNewTopic( TOCBuilderContext *context )
 	    child:(NSInteger)theIndex
 	   ofItem:(id)item
 {
-    return item? [item objectInSubTopicsAtIndex:theIndex] : [_rootTopics objectAtIndex:theIndex];
+    return item? [item objectInSubTopicsAtIndex:theIndex] : _rootTopics[theIndex];
 }
 
 - (id)outlineView:(NSOutlineView *)outlineView

@@ -20,9 +20,8 @@
 //
 
 #import "CHMVersionChecker.h"
-#import "MacPADSocket.h"
 
-@interface CHMVersionChecker () <MacPADSocketNotifications>
+@interface CHMVersionChecker () //<MacPADSocketNotifications>
 
 @end
 
@@ -51,13 +50,14 @@ static NSString *FIRST_TIME_PREF = @"VersionChecker:firstTime";
 }
 
 
--(id) init {
+-(instancetype) init {
     if( self = [super init] ) {
-        [NSBundle loadNibNamed: @"VersionChecker" owner: self];
+//        [NSBundle loadNibNamed: @"VersionChecker" owner: self];
+        [[NSBundle mainBundle] loadNibNamed:@"VersionChecker" owner:self topLevelObjects:nil];
         
         _isAutomaticCheck = FALSE;
-        _macPAD = [[MacPADSocket alloc] init];
-        [_macPAD setDelegate:self];
+//        _macPAD = [[MacPADSocket alloc] init];
+//        _macPAD.delegate = self;
     }
     
     return self;
@@ -67,20 +67,16 @@ static NSString *FIRST_TIME_PREF = @"VersionChecker:firstTime";
 -(void) awakeFromNib {
     // Update title of windows with application's name
     NSString *appName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"]; 
-    [_updateAvailableWindow setTitle:[NSString stringWithFormat:[_updateAvailableWindow title], appName]];
-    [_upToDateWindow setTitle:[NSString stringWithFormat:[_upToDateWindow title], appName]];
-    [_cannotCheckWindow setTitle:[NSString stringWithFormat:[_cannotCheckWindow title], appName]];
+    _updateAvailableWindow.title = [NSString stringWithFormat:_updateAvailableWindow.title, appName];
+    _upToDateWindow.title = [NSString stringWithFormat:_upToDateWindow.title, appName];
+    _cannotCheckWindow.title = [NSString stringWithFormat:_cannotCheckWindow.title, appName];
     
     NSCellStateValue preferenceState = [[NSUserDefaults standardUserDefaults] boolForKey:AUTOMATIC_CHECK_PREF]? NSOnState : NSOffState;
-    [_preferenceButton1 setState:preferenceState];
-    [_preferenceButton2 setState:preferenceState];
-    [_preferenceButton3 setState:preferenceState];
+    _preferenceButton1.state = preferenceState;
+    _preferenceButton2.state = preferenceState;
+    _preferenceButton3.state = preferenceState;
 }
 
--(void) dealloc {
-    [_macPAD release];
-    [super dealloc];
-}
 
 #pragma mark Activation
 
@@ -89,7 +85,7 @@ static NSString *FIRST_TIME_PREF = @"VersionChecker:firstTime";
     
     @synchronized( self ) {
         _isAutomaticCheck = FALSE;
-        [_macPAD performCheck];
+//        [_macPAD performCheck];
     }
 }
 
@@ -100,7 +96,7 @@ static NSString *FIRST_TIME_PREF = @"VersionChecker:firstTime";
 
 	if( [self shouldAutomaticallyCheckForNewVersion] ) {
 	    _isAutomaticCheck = TRUE;
-	    [_macPAD performCheck];
+//	    [_macPAD performCheck];
 	}
     }
 }
@@ -109,23 +105,23 @@ static NSString *FIRST_TIME_PREF = @"VersionChecker:firstTime";
 
 - (IBAction)closeWindow:(id)sender
 {
-    if ([NSApp modalWindow]) {
-        [[NSApp modalWindow] close];
+    if (NSApp.modalWindow) {
+        [NSApp.modalWindow close];
         [NSApp abortModal];
     }
 }
 
 - (IBAction)update:(id)sender
 {
-    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:[_macPAD productPageURL]]];
+//    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:[_macPAD productPageURL]]];
     [self closeWindow:nil];
 }
 
 - (IBAction)changePreference:(id)sender {
     NSCellStateValue state = [sender state];
-    [_preferenceButton1 setState:state];
-    [_preferenceButton2 setState:state];
-    [_preferenceButton3 setState:state];
+    _preferenceButton1.state = state;
+    _preferenceButton2.state = state;
+    _preferenceButton3.state = state;
     [[NSUserDefaults standardUserDefaults] setBool:(state == NSOnState) forKey:AUTOMATIC_CHECK_PREF];
     [[NSNotificationCenter defaultCenter] postNotificationName:AUTOMATIC_CHECK_PREF object:sender]; 
 }
@@ -140,7 +136,7 @@ static NSString *FIRST_TIME_PREF = @"VersionChecker:firstTime";
 
 - (void)macPADErrorOccurred:(NSNotification *)notification
 {
-    NSLog( @"Error while checking for new version: %@", [[notification userInfo] objectForKey:MacPADErrorMessage]);
+//    NSLog( @"Error while checking for new version: %@", notification.userInfo[MacPADErrorMessage]);
 
     if ([self shouldNotifyLackOfNewVersion]) {
         [NSApp runModalForWindow:_cannotCheckWindow];
@@ -152,26 +148,28 @@ static NSString *FIRST_TIME_PREF = @"VersionChecker:firstTime";
 
 - (void)macPADCheckFinished:(NSNotification *)notification
 {
-    if( [[[notification userInfo] objectForKey:MacPADNewVersionAvailable] boolValue] ) {
+    /*
+    if( [notification.userInfo[MacPADNewVersionAvailable] boolValue] ) {
         // New version available
         [self updateNewVersionAvailability:YES];
         
-        NSString *format = [_updateDescriptionTextField stringValue];
+        NSString *format = _updateDescriptionTextField.stringValue;
         
         NSString *releaseText = [[_macPAD releaseDate] descriptionWithCalendarFormat:@"%Y-%m-%d" timeZone:nil locale:nil];
-        NSTimeInterval releaseAge = -[[_macPAD releaseDate] timeIntervalSinceNow] / 60.0 / 60.0 / 24.0;
+        NSTimeInterval releaseAge = -[_macPAD releaseDate].timeIntervalSinceNow / 60.0 / 60.0 / 24.0;
         
-        [_updateDescriptionTextField setStringValue:[NSString stringWithFormat:format,
-                                                     releaseText, [_macPAD newVersion], (int)releaseAge, [_macPAD currentVersion]]];
+        _updateDescriptionTextField.stringValue = [NSString stringWithFormat:format,
+                                                     releaseText, [_macPAD newVersion], (int)releaseAge, [_macPAD currentVersion]];
         
         [NSApp runModalForWindow:_updateAvailableWindow];
-        [_updateDescriptionTextField setStringValue:format];
+        _updateDescriptionTextField.stringValue = format;
     }
     else if( [self shouldNotifyLackOfNewVersion] ) {
         // Running version is up to date
         [self updateNewVersionAvailability:NO];
         [NSApp runModalForWindow:_upToDateWindow];
     }
+     */
 }
 
 #pragma mark Preferences

@@ -24,11 +24,9 @@
 @class CHMTopic;
 @class CHMContainer;
 
-@interface CHMTableOfContents : NSObject <NSOutlineViewDataSource> {
-    NSMutableArray *_rootTopics;
-}
+@interface CHMTableOfContents : NSObject <NSOutlineViewDataSource>
 
-- (id)initWithContainer:(CHMContainer *)container;
+- (instancetype)initWithContainer:(CHMContainer *)container;
 - (void)addRootTopic:(CHMTopic *)topic;
 
 @end

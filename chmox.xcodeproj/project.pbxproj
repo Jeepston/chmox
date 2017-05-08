@@ -17,15 +17,12 @@
 		448AF5A3064AA5E100FA37BD /* CHMDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 448AF5A1064AA5E100FA37BD /* CHMDocument.m */; };
 		448AF5AC064AE52F00FA37BD /* CHMWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 448AF5AA064AE52F00FA37BD /* CHMWindowController.h */; };
 		448AF5AD064AE52F00FA37BD /* CHMWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 448AF5AB064AE52F00FA37BD /* CHMWindowController.m */; };
-		448AF6FD064AFD3500FA37BD /* chm_lib.c in Sources */ = {isa = PBXBuildFile; fileRef = 448AF6F9064AFD3500FA37BD /* chm_lib.c */; };
+		448AF6FD064AFD3500FA37BD /* chm_lib.c in Sources */ = {isa = PBXBuildFile; fileRef = 448AF6F9064AFD3500FA37BD /* chm_lib.c */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		448AF6FE064AFD3500FA37BD /* chm_lib.h in Headers */ = {isa = PBXBuildFile; fileRef = 448AF6FA064AFD3500FA37BD /* chm_lib.h */; };
-		448AF6FF064AFD3500FA37BD /* lzx.c in Sources */ = {isa = PBXBuildFile; fileRef = 448AF6FB064AFD3500FA37BD /* lzx.c */; };
+		448AF6FF064AFD3500FA37BD /* lzx.c in Sources */ = {isa = PBXBuildFile; fileRef = 448AF6FB064AFD3500FA37BD /* lzx.c */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		448AF700064AFD3500FA37BD /* lzx.h in Headers */ = {isa = PBXBuildFile; fileRef = 448AF6FC064AFD3500FA37BD /* lzx.h */; };
 		44923A7A072C57E90070AA26 /* CHMApplication.h in Headers */ = {isa = PBXBuildFile; fileRef = 44923A78072C57E90070AA26 /* CHMApplication.h */; };
 		44923A7B072C57E90070AA26 /* CHMApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 44923A79072C57E90070AA26 /* CHMApplication.m */; };
-		4494977A073D406800D8BC20 /* MacPAD.url in Resources */ = {isa = PBXBuildFile; fileRef = 44949779073D406800D8BC20 /* MacPAD.url */; };
-		4494984E073D5A1700D8BC20 /* MacPADSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 4494984C073D5A1700D8BC20 /* MacPADSocket.h */; };
-		4494984F073D5A1700D8BC20 /* MacPADSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 4494984D073D5A1700D8BC20 /* MacPADSocket.m */; };
 		44A2657C080EEB8900273DC8 /* CHMDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = 44A2657B080EEB8900273DC8 /* CHMDocument.xib */; };
 		44B501B206A587BA00CE0A8E /* CHMVersionChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 44B501B006A587BA00CE0A8E /* CHMVersionChecker.h */; };
 		44B501B306A587BA00CE0A8E /* CHMVersionChecker.m in Sources */ = {isa = PBXBuildFile; fileRef = 44B501B106A587BA00CE0A8E /* CHMVersionChecker.m */; };
@@ -34,7 +31,7 @@
 		44F984BF06576CA60076336E /* CHMTopic.h in Headers */ = {isa = PBXBuildFile; fileRef = 44F984BD06576CA60076336E /* CHMTopic.h */; };
 		44F984C006576CA60076336E /* CHMTopic.m in Sources */ = {isa = PBXBuildFile; fileRef = 44F984BE06576CA60076336E /* CHMTopic.m */; };
 		44F984FA065774580076336E /* CHMTableOfContents.h in Headers */ = {isa = PBXBuildFile; fileRef = 44F984F8065774580076336E /* CHMTableOfContents.h */; };
-		44F984FB065774580076336E /* CHMTableOfContents.m in Sources */ = {isa = PBXBuildFile; fileRef = 44F984F9065774580076336E /* CHMTableOfContents.m */; };
+		44F984FB065774580076336E /* CHMTableOfContents.m in Sources */ = {isa = PBXBuildFile; fileRef = 44F984F9065774580076336E /* CHMTableOfContents.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		55B23B811E54325E009C456D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 55B23B831E54325E009C456D /* InfoPlist.strings */; };
 		55B23B851E543B2C009C456D /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55B23B841E543B2C009C456D /* Media.xcassets */; };
 		55D973F31E54B36300355BE3 /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 55D973F21E54B36300355BE3 /* libxml2.tbd */; };
@@ -75,10 +72,6 @@
 		44923A79072C57E90070AA26 /* CHMApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHMApplication.m; sourceTree = "<group>"; };
 		4492A06607BF9876007B237D /* fa */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = fa; path = fa.lproj/Credits.rtf; sourceTree = "<group>"; };
 		4492A06A07BF98B1007B237D /* fa */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fa; path = fa.lproj/Localizable.strings; sourceTree = "<group>"; };
-		44949779073D406800D8BC20 /* MacPAD.url */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MacPAD.url; sourceTree = SOURCE_ROOT; };
-		44949839073D56ED00D8BC20 /* MacPAD.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = MacPAD.plist; sourceTree = SOURCE_ROOT; };
-		4494984C073D5A1700D8BC20 /* MacPADSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacPADSocket.h; sourceTree = "<group>"; };
-		4494984D073D5A1700D8BC20 /* MacPADSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MacPADSocket.m; sourceTree = "<group>"; };
 		44A2655E080EEB5800273DC8 /* zh_TW */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = zh_TW; path = zh_TW.lproj/Credits.rtf; sourceTree = "<group>"; };
 		44A2657F080EEBBD00273DC8 /* zh_TW */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh_TW; path = zh_TW.lproj/Localizable.strings; sourceTree = "<group>"; };
 		44B501B006A587BA00CE0A8E /* CHMVersionChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHMVersionChecker.h; sourceTree = "<group>"; };
@@ -197,9 +190,8 @@
 		2A37F4AFFDCFA73011CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
-				4494984B073D5A1700D8BC20 /* MacPAD */,
-				44D7FFF0065A9C7B00D2B23E /* prefix.pch */,
 				448AF6EF064AFCD900FA37BD /* chmlib */,
+				44D7FFF0065A9C7B00D2B23E /* prefix.pch */,
 				2A37F4B0FDCFA73011CA2CEA /* main.m */,
 			);
 			name = "Other Sources";
@@ -210,8 +202,6 @@
 			children = (
 				445DEACC07B4086C0008D692 /* Localizable.strings */,
 				443EA40607B2DF6C00C46016 /* application.icns */,
-				44949839073D56ED00D8BC20 /* MacPAD.plist */,
-				44949779073D406800D8BC20 /* MacPAD.url */,
 				44DA07230694985300777FAE /* LICENSE.txt */,
 				448CC7E5068A2ED200F9B0DB /* LGPL.r */,
 				44B7AED10675301E00B51920 /* chmdoc.icns */,
@@ -248,15 +238,6 @@
 			path = chmlib;
 			sourceTree = "<group>";
 		};
-		4494984B073D5A1700D8BC20 /* MacPAD */ = {
-			isa = PBXGroup;
-			children = (
-				4494984C073D5A1700D8BC20 /* MacPADSocket.h */,
-				4494984D073D5A1700D8BC20 /* MacPADSocket.m */,
-			);
-			path = MacPAD;
-			sourceTree = SOURCE_ROOT;
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -274,7 +255,6 @@
 				44F984FA065774580076336E /* CHMTableOfContents.h in Headers */,
 				44B501B206A587BA00CE0A8E /* CHMVersionChecker.h in Headers */,
 				44923A7A072C57E90070AA26 /* CHMApplication.h in Headers */,
-				4494984E073D5A1700D8BC20 /* MacPADSocket.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -344,7 +324,6 @@
 				44B7AED20675301E00B51920 /* chmdoc.icns in Resources */,
 				55B23B851E543B2C009C456D /* Media.xcassets in Resources */,
 				44B501C906A58D3300CE0A8E /* VersionChecker.xib in Resources */,
-				4494977A073D406800D8BC20 /* MacPAD.url in Resources */,
 				445DEACD07B4086C0008D692 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -384,7 +363,6 @@
 				44F984FB065774580076336E /* CHMTableOfContents.m in Sources */,
 				44B501B306A587BA00CE0A8E /* CHMVersionChecker.m in Sources */,
 				44923A7B072C57E90070AA26 /* CHMApplication.m in Sources */,
-				4494984F073D5A1700D8BC20 /* MacPADSocket.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -472,6 +450,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = application;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
@@ -502,6 +481,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = application;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;

@@ -21,34 +21,21 @@
 
 #import <Foundation/Foundation.h>
 
-struct chmFile;
 
-@interface CHMContainer : NSObject {
-    struct chmFile *_handle;
-    NSString *_uniqueId;
-    
-    NSString *_path;
-    NSString *_title;
-    NSString *_homePath;
-    NSString *_tocPath;
-    NSString *_indexPath;
-}
+@interface CHMContainer : NSObject
+
 
 + (instancetype)containerWithContentsOfFile:(NSString *)path;
 
 - (instancetype)initWithContentsOfFile:(NSString *)path;
 
-- (BOOL)hasObjectWithPath: (NSString *)path;
 - (NSData *)dataWithContentsOfObject: (NSString *)objectPath;
-- (NSString *)stringWithContentsOfObject: (NSString *)objectPath;
-- (NSData *)dataWithTableOfContents;
 
-- (BOOL)loadMetadata;
-- (NSString *)findHomeForPath: (NSString *)basePath;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSData *dataWithTableOfContents;
 
 @property (readonly, copy) NSString *title;
 @property (readonly, copy) NSString *uniqueId;
-@property (readonly, copy) NSString *tocPath;
 @property (readonly, copy) NSString *homePath;
+
 
 @end

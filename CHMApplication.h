@@ -21,11 +21,9 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class CHMVersionChecker;
 
-@interface CHMApplication : NSObject {
-    CHMVersionChecker *_versionChecker;
-}
+
+@interface CHMApplication : NSObject
 
 - (IBAction) checkForUpdates: (id)sender;
 

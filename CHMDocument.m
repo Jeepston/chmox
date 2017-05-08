@@ -11,7 +11,7 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with Foobar; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -25,11 +25,27 @@
 #import "CHMTableOfContents.h"
 #import "CHMURLProtocol.h"
 
+@interface CHMDocument () {
+    
+    CHMWindowController *_windowController;
+    
+    CHMContainer *_container;
+    CHMTableOfContents *_tableOfContents;
+    
+    NSMutableArray *_bookmarks;
+    NSMutableArray *_searchResults;
+}
+
+@property (weak, readonly) NSString *title;
+
+
+@end
+
 @implementation CHMDocument
 
 #pragma mark NSObject
 
-- (id) init
+- (instancetype) init
 {
     if( self = [super init] ) {
         _container = nil;
@@ -42,12 +58,9 @@
 - (void) dealloc
 {
     if( _container ) {
-	[CHMURLProtocol unregisterContainer:_container];
+        [CHMURLProtocol unregisterContainer:_container];
     }
-	[_tableOfContents release];
-	[_container release];
     
-    [super dealloc];
 }
 
 #pragma mark NSDocument
@@ -56,7 +69,6 @@
 {
     _windowController = [[CHMWindowController alloc] initWithWindowNibName:@"CHMDocument"];
     [self addWindowController:_windowController];
-    [_windowController release];
 }
 
 
@@ -65,10 +77,10 @@
     
     _container = [[CHMContainer alloc] initWithContentsOfFile:fileName];
     if( !_container ) return NO;
-
+    
     [CHMURLProtocol registerContainer:_container];
     _tableOfContents = [[CHMTableOfContents alloc] initWithContainer:_container];
-
+    
     return YES;
 }
 
@@ -82,19 +94,17 @@
 
 - (NSString *)title
 {
-    return [_container title];
+    return _container.title;
 }
 
 - (NSURL *)currentLocation
 {
-    return [CHMURLProtocol URLWithPath:[_container homePath] inContainer:_container];
+    return [CHMURLProtocol URLWithPath:_container.homePath inContainer:_container];
 }
-
-@synthesize tableOfContents = _tableOfContents;
 
 - (NSString *)uniqueId
 {
-    return [_container uniqueId];
+    return _container.uniqueId;
 }
 
 

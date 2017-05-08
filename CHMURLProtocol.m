@@ -26,7 +26,7 @@
 
 #pragma mark Lifecycle
 
--(id)initWithRequest:(NSURLRequest *)request
+-(instancetype)initWithRequest:(NSURLRequest *)request
       cachedResponse:(NSCachedURLResponse *)cachedResponse
 	      client:(id <NSURLProtocolClient>)client
 {
@@ -40,7 +40,7 @@ static NSMutableDictionary *_baseURLs = nil;
 
 + (void)registerContainer:(CHMContainer *)container
 {
-    NSString *key = [container uniqueId];
+    NSString *key = container.uniqueId;
 
     if( !_containers ) {
 	_containers = [[NSMutableDictionary alloc] init];
@@ -48,18 +48,18 @@ static NSMutableDictionary *_baseURLs = nil;
     }
     
     NSURL *baseURL = [NSURL URLWithString:[NSString stringWithFormat:@"chmox-internal://%@/", key]];
-    [_containers setObject:container forKey:key];
-    [_baseURLs setObject:baseURL forKey:key];
+    _containers[key] = container;
+    _baseURLs[key] = baseURL;
 }
 
 + (CHMContainer *)containerForUniqueId:(NSString *)uniqueId
 {
-    return _containers? [_containers objectForKey:uniqueId] : nil;
+    return _containers? _containers[uniqueId] : nil;
 }
 
 + (void)unregisterContainer:(CHMContainer *)container
 {
-    NSString *key = [container uniqueId];
+    NSString *key = container.uniqueId;
 
     [_containers removeObjectForKey:key];
     [_baseURLs removeObjectForKey:key];
@@ -67,37 +67,37 @@ static NSMutableDictionary *_baseURLs = nil;
 
 + (NSURL *)URLWithPath:(NSString *)path inContainer:(CHMContainer *)container
 {
-    NSURL *baseURL = [_baseURLs objectForKey:[container uniqueId]];
-    NSURL *url = [NSURL URLWithString:path relativeToURL:baseURL];
+    NSURL *baseURL = _baseURLs[container.uniqueId];
+    NSURL *url = [NSURL URLWithString:[path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] relativeToURL:baseURL];
     
-    if( baseURL && url == nil ) {
-	// Something is wrong, perhaps path is not well-formed. Try percent-
-	// escaping characters. It's not clear what encoding should be used,
-	// but for now let's just use Latin1.
-	CFStringRef str = CFURLCreateStringByAddingPercentEscapes(
-            nil,                                // allocator
-            (CFStringRef)path,                  // <#CFStringRef originalString#>
-	    CFSTR("%#"),                 // <#CFStringRef charactersToLeaveUnescaped#>
-	    nil,                                // <#CFStringRef legalURLCharactersToBeEscaped#>,
-	    kCFStringEncodingWindowsLatin1      //<#CFStringEncoding encoding#>
-        );
-        
-        url = [NSURL URLWithString:(NSString*)str relativeToURL:baseURL];
-		CFRelease(str);
-    }
+//    if( baseURL && url == nil ) {
+//	// Something is wrong, perhaps path is not well-formed. Try percent-
+//	// escaping characters. It's not clear what encoding should be used,
+//	// but for now let's just use Latin1.
+//	CFStringRef str = CFURLCreateStringByAddingPercentEscapes(
+//            nil,                                // allocator
+//            (CFStringRef)path,                  // <#CFStringRef originalString#>
+//	    CFSTR("%#"),                 // <#CFStringRef charactersToLeaveUnescaped#>
+//	    nil,                                // <#CFStringRef legalURLCharactersToBeEscaped#>,
+//	    kCFStringEncodingWindowsLatin1      //<#CFStringEncoding encoding#>
+//        );
+//        
+//        url = [NSURL URLWithString:(NSString*)str relativeToURL:baseURL];
+//		CFRelease(str);
+//    }
     
     return url;
 }
 
 + (BOOL)canHandleURL:(NSURL *)anURL 
 {
-    return [[anURL scheme] isEqualToString:@"chmox-internal"];
+    return [anURL.scheme isEqualToString:@"chmox-internal"];
 }
 
 #pragma mark NSURLProtocol overriding
 + (BOOL)canInitWithRequest:(NSURLRequest *)request
 {
-    if( [self canHandleURL:[request URL]] ) {
+    if( [self canHandleURL:request.URL] ) {
 	return YES;
     }
     else {
@@ -117,7 +117,7 @@ static NSMutableDictionary *_baseURLs = nil;
 {
     DEBUG_OUTPUT( @"CHMURLProtocol:startLoading %@", [self request] );
 
-    NSURL *url = [[self request] URL];
+    NSURL *url = self.request.URL;
 
 /*
  NSString *rawPath = [[[self request] URL] path];
@@ -132,39 +132,38 @@ static NSMutableDictionary *_baseURLs = nil;
  CHMContainer *container = [CHMContainer containerWithContentsOfFile:containerPath];
  */
 
-    CHMContainer *container = [CHMURLProtocol containerForUniqueId:[url host]];
+    CHMContainer *container = [CHMURLProtocol containerForUniqueId:url.host];
 	    
     if( !container ) {
-	[[self client] URLProtocol:self didFailWithError:[NSError errorWithDomain:NSURLErrorDomain code:0 userInfo:nil]];
+	[self.client URLProtocol:self didFailWithError:[NSError errorWithDomain:NSURLErrorDomain code:0 userInfo:nil]];
 	return;
     }
 
     NSData *data;
     
-    if( [url parameterString] ) {
-        data = [container dataWithContentsOfObject:[NSString stringWithFormat:@"%@;%@", [url path], [url parameterString]] ];
+    if( url.parameterString ) {
+        data = [container dataWithContentsOfObject:[NSString stringWithFormat:@"%@;%@", url.path, url.parameterString] ];
     }
     else {
-        data = [container dataWithContentsOfObject:[url path]];
+        data = [container dataWithContentsOfObject:url.path];
     }
     
     if( !data ) {
-	[[self client] URLProtocol:self didFailWithError:[NSError errorWithDomain:NSURLErrorDomain code:0 userInfo:nil]];
+	[self.client URLProtocol:self didFailWithError:[NSError errorWithDomain:NSURLErrorDomain code:0 userInfo:nil]];
 	return;
     }
     
-    NSURLResponse *response = [[NSURLResponse alloc] initWithURL: [[self request] URL]
+    NSURLResponse *response = [[NSURLResponse alloc] initWithURL: self.request.URL
 							MIMEType:@"application/octet-stream"
-					   expectedContentLength:[data length]
+					   expectedContentLength:data.length
 						textEncodingName:nil];
-    [[self client] URLProtocol:self     
+    [self.client URLProtocol:self     
 	    didReceiveResponse:response 
 	    cacheStoragePolicy:NSURLCacheStorageNotAllowed];
     
-    [[self client] URLProtocol:self didLoadData:data];
-    [[self client] URLProtocolDidFinishLoading:self];
+    [self.client URLProtocol:self didLoadData:data];
+    [self.client URLProtocolDidFinishLoading:self];
 
-    [response release];
 }
 
 

@@ -11,7 +11,7 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with Foobar; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -21,19 +21,27 @@
 
 #import "CHMTopic.h"
 
+@interface CHMTopic () {
+    
+    NSMutableArray *_subTopics;
+}
+
+@property (copy) NSString *name;
+
+
+@end
+
 
 @implementation CHMTopic
-@synthesize name = _name;
-@synthesize location = _location;
 
-#pragma mark Lifecycle
+#pragma mark - Lifecycle
 
-- (id)initWithName:(NSString *)topicName location:(NSURL *)topicLocation
+- (instancetype)initWithName:(NSString *)topicName location:(NSURL *)topicLocation
 {
     if( self = [super init] ) {
         _name = [topicName copy];
-        _location = [topicLocation retain];
-	_subTopics = nil;
+        _location = topicLocation;
+        _subTopics = nil;
     }
     
     return self;
@@ -41,28 +49,17 @@
 
 - (id)copyWithZone:(NSZone *)zone {
     CHMTopic *other = [[CHMTopic allocWithZone: zone] initWithName:_name location:_location];
-
+    
     if( _subTopics ) {
-	other->_subTopics = [_subTopics mutableCopy];
+        other->_subTopics = [_subTopics mutableCopy];
     }
     
     return other;
 }
 
-- (void) dealloc
-{
-    [_name release];
-    [_location release];
-    
-    if( _subTopics ) {
-	[_subTopics release];
-    }
-
-    [super dealloc];
-}
 
 
-#pragma mark Accessors
+#pragma mark - Accessors
 
 - (NSString *)description
 {
@@ -72,16 +69,16 @@
 
 - (NSUInteger)countOfSubTopics
 {
-    return _subTopics? [_subTopics count] : 0;
+    return _subTopics? _subTopics.count : 0;
 }
 
 
 - (CHMTopic *)objectInSubTopicsAtIndex:(NSUInteger)theIndex
 {
-    return _subTopics? [_subTopics objectAtIndex:theIndex] : nil;
+    return _subTopics? _subTopics[theIndex] : nil;
 }
 
-#pragma mark Mutators
+#pragma mark - Mutators
 
 - (void)addObject:(CHMTopic *)topic
 {
@@ -104,7 +101,7 @@
 - (void)removeObjectFromSubTopicsAtIndex:(NSUInteger)theIndex
 {
     if( _subTopics ) {
-	[_subTopics removeObjectAtIndex:theIndex];
+        [_subTopics removeObjectAtIndex:theIndex];
     }
 }
 

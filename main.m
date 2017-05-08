@@ -21,19 +21,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-int main( int argc, const char *argv[] )
-{
-/*
-    @try {
-*/
+int main( int argc, const char *argv[] ) {
 	return NSApplicationMain( argc, argv );
-/*
-    }
-    @catch ( NSException *e ) {
-	NSLog( @"Exception: %@", e );
-        @throw e;
-    }
-    @finally {
-    }
-    */
 }

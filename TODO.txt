@@ -8,6 +8,11 @@ FEATURES
 - Printing
 - History (back & forward)
 - Home page
+- Convert drawer to side panel
+- Assign hot key to show / hide side panel
+- Indicate current section in contents
+- Go Forward and backward in the document (buttons, icons and swipes)
+- Change font
 
 ENHANCEMENTS
 - Disable drag'n drop of internal links

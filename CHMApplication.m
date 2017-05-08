@@ -23,35 +23,34 @@
 #import "CHMVersionChecker.h"
 #import "CHMURLProtocol.h"
 
+@interface CHMApplication () {
+    
+    CHMVersionChecker *versionChecker;
+}
+
+@end
 
 @implementation CHMApplication
 
--(void) dealloc {
-    [_versionChecker release];
-    [super dealloc];
-}
 
--(void) awakeFromNib {
-}
-
-#pragma mark Startup and Shutdown
+#pragma mark - Startup and Shutdown
 - (void)applicationWillFinishLaunching:(NSNotification *)notification {
     [NSURLProtocol registerClass:[CHMURLProtocol class]];
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification {
-    _versionChecker = [[CHMVersionChecker alloc] init];
-    [_versionChecker automaticallyCheckForNewVersion];
+    versionChecker = [[CHMVersionChecker alloc] init];
+    [versionChecker automaticallyCheckForNewVersion];
 }
 
 - (void)applicationWillTerminate:(NSNotification *)notification {
     [NSURLProtocol unregisterClass:[CHMURLProtocol class]];
 }
 
-#pragma mark Menu bar actions
+#pragma mark - Menu bar actions
 
 - (IBAction) checkForUpdates: (id)sender {
-    [_versionChecker checkForNewVersion];
+    [versionChecker checkForNewVersion];
 }
 
 @end

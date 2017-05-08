@@ -338,8 +338,8 @@ static const char _CHMU_LZXC_CONTROLDATA[] =
         "::DataSpace/Storage/MSCompressed/ControlData";
 static const char _CHMU_CONTENT[] =
         "::DataSpace/Storage/MSCompressed/Content";
-static const char _CHMU_SPANINFO[] =
-        "::DataSpace/Storage/MSCompressed/SpanInfo";
+//static const char _CHMU_SPANINFO[] =
+//        "::DataSpace/Storage/MSCompressed/SpanInfo";
 
 /*
  * structures local to this module
@@ -693,7 +693,8 @@ static Int64 _chm_fetch_bytes(struct chmFile *h,
                               UInt64 os,
                               Int64 len)
 {
-    Int64 readLen=0, oldOs=0;
+    Int64 readLen=0;
+//    Int64 oldOs=0;
     if (h->fd  ==  CHM_NULL_FD)
         return readLen;
 
@@ -1407,7 +1408,7 @@ static Int64 _chm_decompress_block(struct chmFile *h,
     /* let the caching system pull its weight! */
     if (block - blockAlign <= h->lzx_last_block  &&
         block              >= h->lzx_last_block)
-        blockAlign = (block - h->lzx_last_block);
+        blockAlign = (UInt32)(block - h->lzx_last_block);
 
     /* check if we need previous blocks */
     if (blockAlign != 0)
@@ -1415,7 +1416,7 @@ static Int64 _chm_decompress_block(struct chmFile *h,
         /* fetch all required previous blocks since last reset */
         for (i = blockAlign; i > 0; i--)
         {
-            UInt32 curBlockIdx = block - i;
+            UInt32 curBlockIdx = (UInt32)(block - i);
 
             /* check if we most recently decompressed the previous block */
             if (h->lzx_last_block != curBlockIdx)
@@ -1574,7 +1575,8 @@ LONGINT64 chm_retrieve_object(struct chmFile *h,
         return (Int64)0;
 
     /* starting address must be in correct range */
-    if (addr < 0  ||  addr >= ui->length)
+//    if (addr < 0  ||  addr >= ui->length)
+    if (addr >= ui->length)
         return (Int64)0;
 
     /* clip length */
@@ -1785,7 +1787,7 @@ int chm_enumerate_dir(struct chmFile *h,
     /* initialize pathname state */
     strncpy(prefixRectified, prefix, CHM_MAX_PATHLEN);
     prefixRectified[CHM_MAX_PATHLEN] = '\0';
-    prefixLen = strlen(prefixRectified);
+    prefixLen = (int)strlen(prefixRectified);
     if (prefixLen != 0)
     {
         if (prefixRectified[prefixLen-1] != '/')
@@ -1863,7 +1865,7 @@ int chm_enumerate_dir(struct chmFile *h,
             }
             strncpy(lastPath, ui.path, CHM_MAX_PATHLEN);
             lastPath[CHM_MAX_PATHLEN] = '\0';
-            lastPathLen = strlen(lastPath);
+            lastPathLen = (int)strlen(lastPath);
 
             /* get the length of the path */
             ui_path_len = strlen(ui.path)-1;

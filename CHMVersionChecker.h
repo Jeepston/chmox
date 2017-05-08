@@ -46,8 +46,9 @@ extern NSString *const AUTOMATIC_CHECK_PREF; // Key for user defaults.
 - (IBAction)update:(id)sender;
 - (IBAction)changePreference:(id)sender;
 
-- (BOOL)shouldAutomaticallyCheckForNewVersion;
-- (BOOL)shouldNotifyLackOfNewVersion;
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL shouldAutomaticallyCheckForNewVersion;
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL shouldNotifyLackOfNewVersion;
+
 - (void)updateNewVersionAvailability:(BOOL)isNewVersionAvailable;
 
 @end

@@ -21,25 +21,12 @@
 
 #import <AppKit/AppKit.h>
 
-@class CHMWindowController;
-@class CHMContainer;
 @class CHMTableOfContents;
-@class NSURL;
 
-@interface CHMDocument : NSDocument {
-    @private
-    CHMWindowController *_windowController;
+@interface CHMDocument : NSDocument
 
-    CHMContainer *_container;
-    CHMTableOfContents *_tableOfContents;
-
-    NSMutableArray *_bookmarks;
-    NSMutableArray *_searchResults;
-}
-
-@property (readonly) NSString *title;
-@property (readonly) NSURL *currentLocation;
-@property (readonly, retain) CHMTableOfContents *tableOfContents;
-@property (readonly) NSString *uniqueId;
+@property (weak, readonly) NSURL *currentLocation;
+@property (weak, readonly) NSString *uniqueId;
+@property (readonly, strong) CHMTableOfContents *tableOfContents;
 
 @end

@@ -11,7 +11,7 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with Foobar; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -45,13 +45,13 @@ static NSString *const HISTORY_TOOL_ID = @"chmox.history";
 
 - (void)windowDidLoad
 {
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[self document] currentLocation]];
-    [[_contentsView mainFrame] loadRequest:request];
-
-    [self setWindowFrameAutosaveName:[[self document] uniqueId]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[self.document currentLocation]];
+    [_contentsView.mainFrame loadRequest:request];
+    
+    self.windowFrameAutosaveName = [self.document uniqueId];
     [self setShouldCloseDocument:YES];
-       
-    [_tocView setDataSource:[[self document] tableOfContents]];
+    
+    _tocView.dataSource = [self.document tableOfContents];
     [_tocView setAutoresizesOutlineColumn:NO];
     
     [self updateToolTipRects];
@@ -62,13 +62,13 @@ static NSString *const HISTORY_TOOL_ID = @"chmox.history";
     // Remove Search tab
     tabIndex = [_drawerView indexOfTabViewItemWithIdentifier:SEARCH_TAB_ID];
     if( tabIndex != NSNotFound ) {
-	[_drawerView removeTabViewItem:[_drawerView tabViewItemAtIndex:tabIndex]];
+        [_drawerView removeTabViewItem:[_drawerView tabViewItemAtIndex:tabIndex]];
     }
-
+    
     // Remove Favorites tab
     tabIndex = [_drawerView indexOfTabViewItemWithIdentifier:FAVORITES_TAB_ID];
     if( tabIndex != NSNotFound ) {
-	[_drawerView removeTabViewItem:[_drawerView tabViewItemAtIndex:tabIndex]];
+        [_drawerView removeTabViewItem:[_drawerView tabViewItemAtIndex:tabIndex]];
     }
     
     [_drawer open];
@@ -77,7 +77,7 @@ static NSString *const HISTORY_TOOL_ID = @"chmox.history";
 - (NSString *)windowTitleForDocumentDisplayName:(NSString *)displayName
 {
     // TODO: user preferences to display filename or doc title
-    NSString *windowTitle = [[self document] title];
+    NSString *windowTitle = [self.document title];
     return windowTitle? windowTitle : displayName;
 }
 
@@ -86,51 +86,50 @@ static NSString *const HISTORY_TOOL_ID = @"chmox.history";
 
 // Open external URLs in external viewer
 - (void)webView:(WebView *)sender decidePolicyForNavigationAction:(NSDictionary *)actionInformation
-	request:(NSURLRequest *)request
-	  frame:(WebFrame *)frame decisionListener:(id<WebPolicyDecisionListener>)listener
+        request:(NSURLRequest *)request
+          frame:(WebFrame *)frame decisionListener:(id<WebPolicyDecisionListener>)listener
 {
-    if( [CHMURLProtocol canHandleURL:[request URL]] ) {
-	[listener use];
+    if( [CHMURLProtocol canHandleURL:request.URL] ) {
+        [listener use];
     } else {
-	NSLog( @"Opening external URL %@", [request URL]);
-	[[NSWorkspace sharedWorkspace] openURL:[request URL]];
-	[listener ignore];
+        NSLog( @"Opening external URL %@", request.URL);
+        [[NSWorkspace sharedWorkspace] openURL:request.URL];
+        [listener ignore];
     }
 }
 
 // Open external URLs in new window in external viewer
-- (void)webView:(WebView *)sender 
-	decidePolicyForNewWindowAction:(NSDictionary *)actionInformation 
-	request:(NSURLRequest *)request 
-	newFrameName:(NSString *)frameName 
-	decisionListener:(id<WebPolicyDecisionListener>)listener
+- (void)webView:(WebView *)sender decidePolicyForNewWindowAction:(NSDictionary *)actionInformation
+        request:(NSURLRequest *)request
+   newFrameName:(NSString *)frameName
+decisionListener:(id<WebPolicyDecisionListener>)listener
 {
-    NSLog( @"WebPolicyDelegate: decidePolicyForNewWindowAction called %@", [request URL]);
-
-    if( [CHMURLProtocol canHandleURL:[request URL]] ) {
-	// Need testing
-	[listener use];
+    NSLog( @"WebPolicyDelegate: decidePolicyForNewWindowAction called %@", request.URL);
+    
+    if( [CHMURLProtocol canHandleURL:request.URL] ) {
+        // Need testing
+        [listener use];
     } else {
-	NSLog( @"Opening external URL %@", [request URL]);
-	[[NSWorkspace sharedWorkspace] openURL:[request URL]];
-	[listener ignore];
+        NSLog( @"Opening external URL %@", request.URL);
+        [[NSWorkspace sharedWorkspace] openURL:request.URL];
+        [listener ignore];
     }
 }
-	
-	
-#pragma mark WebUIDelegate 
 
-- (NSArray *)webView:(WebView *)sender 
-    contextMenuItemsForElement:(NSDictionary *)element
+
+#pragma mark WebUIDelegate
+
+- (NSArray *)webView:(WebView *)sender
+contextMenuItemsForElement:(NSDictionary *)element
     defaultMenuItems:(NSArray *)defaultMenuItems
 {
     NSLog( @"contextMenuItemsForElement: %@", element );
-
-    NSURL *link = [element objectForKey:WebElementLinkURLKey];
+    
+    NSURL *link = element[WebElementLinkURLKey];
     
     if( link && [CHMURLProtocol canHandleURL:link] ) {
-	// No context menu for internal links
-	return nil;
+        // No context menu for internal links
+        return nil;
     }
     
     return defaultMenuItems;
@@ -146,15 +145,15 @@ static NSString *const HISTORY_TOOL_ID = @"chmox.history";
 
 - (NSString *)view:(NSView *)view
   stringForToolTip:(NSToolTipTag)tag
-	     point:(NSPoint)point
-	  userData:(void *)userData
+             point:(NSPoint)point
+          userData:(void *)userData
 {
     if( view == _tocView ) {
-	NSInteger row = [_tocView rowAtPoint:point];
-	
-	if( row >= 0 ) {
-	    return [[_tocView itemAtRow:row] name];
-	}
+        NSInteger row = [_tocView rowAtPoint:point];
+        
+        if( row >= 0 ) {
+            return [[_tocView itemAtRow:row] name];
+        }
     }
     
     return @"";
@@ -163,10 +162,10 @@ static NSString *const HISTORY_TOOL_ID = @"chmox.history";
 - (void)updateToolTipRects
 {
     [_tocView removeAllToolTips];
-    NSRange range = [_tocView rowsInRect:[_tocView visibleRect]];
+    NSRange range = [_tocView rowsInRect:_tocView.visibleRect];
     
     for( NSUInteger i = range.location; i < NSMaxRange( range ); ++i ) {
-	[_tocView addToolTipRect:[_tocView rectOfRow:i] owner:self userData:NULL];
+        [_tocView addToolTipRect:[_tocView rectOfRow:i] owner:self userData:NULL];
     }
 }
 
@@ -180,17 +179,17 @@ static NSString *const HISTORY_TOOL_ID = @"chmox.history";
 #pragma mark Menu Validation
 
 - (BOOL)validateMenuItem:(NSMenuItem*)anItem {
-    if( [anItem action] == @selector( changeTopicToPreviousInHistory: ) ) {
-	return [_contentsView canGoBack];
+    if( anItem.action == @selector( changeTopicToPreviousInHistory: ) ) {
+        return _contentsView.canGoBack;
     }
-    else if( [anItem action] == @selector( changeTopicToNextInHistory: ) ) {
-	return [_contentsView canGoForward];
+    else if( anItem.action == @selector( changeTopicToNextInHistory: ) ) {
+        return _contentsView.canGoForward;
     }
-    else if( [anItem action] == @selector( makeTextSmaller: ) ) {
-	return [_contentsView canMakeTextSmaller];
+    else if( anItem.action == @selector( makeTextSmaller: ) ) {
+        return _contentsView.canMakeTextSmaller;
     }
-    else if( [anItem action] == @selector( makeTextBigger: ) ) {
-	return [_contentsView canMakeTextLarger];
+    else if( anItem.action == @selector( makeTextBigger: ) ) {
+        return _contentsView.canMakeTextLarger;
     }
     
     return YES;
@@ -200,27 +199,27 @@ static NSString *const HISTORY_TOOL_ID = @"chmox.history";
 
 - (void)keyDown:(NSEvent *)theEvent
 {
-    if( [theEvent modifierFlags] & NSCommandKeyMask ) {
-	NSString *keyString = [theEvent charactersIgnoringModifiers];
-//	NSLog( @"CHMWindowController:keyDown %@", [keyString description] );
-	
-	switch( [keyString characterAtIndex:0] ) {
-	    case NSLeftArrowFunctionKey:
-                if( [_contentsView canGoBack] ) {
+    if( theEvent.modifierFlags & NSCommandKeyMask ) {
+        NSString *keyString = theEvent.charactersIgnoringModifiers;
+        //	NSLog( @"CHMWindowController:keyDown %@", [keyString description] );
+        
+        switch( [keyString characterAtIndex:0] ) {
+            case NSLeftArrowFunctionKey:
+                if( _contentsView.canGoBack ) {
                     [_contentsView goBack];
                     return;
                 }
                 break;
-		
-	    case NSRightArrowFunctionKey:
-                if( [_contentsView canGoForward] ) {
+                
+            case NSRightArrowFunctionKey:
+                if( _contentsView.canGoForward ) {
                     [_contentsView goForward];
                     return;
                 }
                 break;
-	}
+        }
     }
-
+    
     [super keyDown:theEvent];
 }
 
@@ -229,96 +228,96 @@ static NSString *const HISTORY_TOOL_ID = @"chmox.history";
 
 - (IBAction)toggleDrawer:(id)sender
 {
-    NSLog( @"First responder: %@", [[self window] firstResponder] );
+    NSLog( @"First responder: %@", self.window.firstResponder );
     [_drawer toggle:self];
 }
 
 - (IBAction)changeTopicWithSelectedRow:(id)sender
 {
-    NSInteger selectedRow = [_tocView selectedRow];
+    NSInteger selectedRow = _tocView.selectedRow;
     
     if( selectedRow >= 0 ) {
-	CHMTopic *topic = [_tocView itemAtRow:selectedRow];
-	NSURL *location = [topic location];
-	
-	if( location ) {
-	    [[_contentsView mainFrame] loadRequest:[NSURLRequest requestWithURL:location]];
-	}
+        CHMTopic *topic = [_tocView itemAtRow:selectedRow];
+        NSURL *location = topic.location;
+        
+        if( location ) {
+            [_contentsView.mainFrame loadRequest:[NSURLRequest requestWithURL:location]];
+        }
     }
     
-    [[self window] makeFirstResponder:self];
+    [self.window makeFirstResponder:self];
 }
 
 - (IBAction)makeTextBigger:(id)sender
 {
-	[ _contentsView makeTextLarger:sender ];
+    [ _contentsView makeTextLarger:sender ];
 }
 
 - (IBAction)makeTextSmaller:(id)sender
 {
-	[ _contentsView makeTextSmaller:sender ];
+    [ _contentsView makeTextSmaller:sender ];
 }
 
 - (IBAction)changeTopicToPreviousInHistory:(id)sender
 {
-	[ _contentsView goBack ];
+    [ _contentsView goBack ];
 }
 
 - (IBAction)changeTopicToNextInHistory:(id)sender
 {
-	[ _contentsView goForward ];
+    [ _contentsView goForward ];
 }
 
 - (void)printDocument:(id)sender {
     // Obtain a custom view that will be printed
-    NSView *docView = [[[_contentsView mainFrame] frameView] documentView];
+    NSView *docView = _contentsView.mainFrame.frameView.documentView;
     
     // Construct the print operation and setup Print panel
     NSPrintOperation *op = [NSPrintOperation printOperationWithView:docView
-                                                          printInfo:[[self document] printInfo]];
+                                                          printInfo:[self.document printInfo]];
 				
     [op setShowsPrintPanel:YES];
-
+    
     // Run operation, which shows the Print panel if showPanels was YES
-    [[self document] runModalPrintOperation:op
-                                   delegate:nil
-                             didRunSelector:NULL
-                                contextInfo:NULL];
+    [self.document runModalPrintOperation:op
+                                 delegate:nil
+                           didRunSelector:NULL
+                              contextInfo:NULL];
 }
 
 #pragma mark Toolbar related methods
 
 - (void)setupToolbar
 {
-    NSToolbar *toolbar = [[[NSToolbar alloc] initWithIdentifier:@"mainToolbar"] autorelease];
-
-    [toolbar setDelegate:self];
+    NSToolbar *toolbar = [[NSToolbar alloc] initWithIdentifier:@"mainToolbar"];
+    
+    toolbar.delegate = self;
     [toolbar setAllowsUserCustomization:YES];
     [toolbar setAutosavesConfiguration:YES];
-    [[self window ] setToolbar:toolbar];
+    self.window .toolbar = toolbar;
 }
 
 - (NSArray *)toolbarAllowedItemIdentifiers:(NSToolbar*)toolbar
 {
     return @[DRAWER_TOGGLE_TOOL_ID,
-        SMALLER_TEXT_TOOL_ID,
-        BIGGER_TEXT_TOOL_ID,
-//        HISTORY_TOOL_ID,
-        NSToolbarPrintItemIdentifier,
-        NSToolbarSeparatorItemIdentifier,
-        NSToolbarSpaceItemIdentifier,
-        NSToolbarFlexibleSpaceItemIdentifier,
-        NSToolbarCustomizeToolbarItemIdentifier,
-        ];
+             SMALLER_TEXT_TOOL_ID,
+             BIGGER_TEXT_TOOL_ID,
+             //        HISTORY_TOOL_ID,
+             NSToolbarPrintItemIdentifier,
+             NSToolbarSeparatorItemIdentifier,
+             NSToolbarSpaceItemIdentifier,
+             NSToolbarFlexibleSpaceItemIdentifier,
+             NSToolbarCustomizeToolbarItemIdentifier,
+             ];
 }
 
 - (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar*)toolbar
 {
     return @[DRAWER_TOGGLE_TOOL_ID,
-        SMALLER_TEXT_TOOL_ID,
-        BIGGER_TEXT_TOOL_ID,
-        NSToolbarFlexibleSpaceItemIdentifier,
-        ];
+             SMALLER_TEXT_TOOL_ID,
+             BIGGER_TEXT_TOOL_ID,
+             NSToolbarFlexibleSpaceItemIdentifier,
+             ];
 }
 
 
@@ -330,24 +329,24 @@ static NSString *const HISTORY_TOOL_ID = @"chmox.history";
     
     if ( [itemIdentifier isEqualToString:DRAWER_TOGGLE_TOOL_ID] ) {
         [item setLabel:NSLocalizedString( DRAWER_TOGGLE_TOOL_ID, nil )];
-        [item setPaletteLabel:[item label]];
-        [item setImage:[NSImage imageNamed:@"toolbar-drawer"]];
-        [item setTarget:self];
-        [item setAction:@selector(toggleDrawer:)];
+        item.paletteLabel = item.label;
+        item.image = [NSImage imageNamed:@"toolbar-drawer"];
+        item.target = self;
+        item.action = @selector(toggleDrawer:);
     }
     else if ( [itemIdentifier isEqualToString:SMALLER_TEXT_TOOL_ID] ) {
         [item setLabel:NSLocalizedString( SMALLER_TEXT_TOOL_ID, nil )];
-        [item setPaletteLabel:[item label]];
-        [item setImage:[NSImage imageNamed:@"toolbar-smaller"]];
-        [item setTarget:self];
-        [item setAction:@selector(makeTextSmaller:)];
+        item.paletteLabel = item.label;
+        item.image = [NSImage imageNamed:@"toolbar-smaller"];
+        item.target = self;
+        item.action = @selector(makeTextSmaller:);
     }
     else if ( [itemIdentifier isEqualToString:BIGGER_TEXT_TOOL_ID] ) {
         [item setLabel:NSLocalizedString( BIGGER_TEXT_TOOL_ID, nil )];
-        [item setPaletteLabel:[item label]];
-        [item setImage:[NSImage imageNamed:@"toolbar-bigger"]];
-        [item setTarget:self];
-        [item setAction:@selector(makeTextBigger:)];
+        item.paletteLabel = item.label;
+        item.image = [NSImage imageNamed:@"toolbar-bigger"];
+        item.target = self;
+        item.action = @selector(makeTextBigger:);
     }
     else if ( [itemIdentifier isEqualToString:HISTORY_TOOL_ID] ) {
         [_historyToolbarItemView setLabel:@"" forSegment:0];
@@ -355,26 +354,26 @@ static NSString *const HISTORY_TOOL_ID = @"chmox.history";
         //[_historyToolbarItemView sizeToFit];
         NSRect frame = [_historyToolbarItemView frame];
         [item setLabel:NSLocalizedString( HISTORY_TOOL_ID, nil )];
-        [item setView:_historyToolbarItemView];
-        [item setMinSize:frame.size];
-        [item setMaxSize:frame.size];
-//        [item setTarget:self];
-//        [item setAction:@selector(makeTextBigger:)];
+        item.view = _historyToolbarItemView;
+        item.minSize = frame.size;
+        item.maxSize = frame.size;
+        //        [item setTarget:self];
+        //        [item setAction:@selector(makeTextBigger:)];
     }
     
     
-    return [item autorelease];
+    return item;
 }
 
 -(BOOL)validateToolbarItem:(NSToolbarItem*)toolbarItem
 {
-    NSString *itemIdentifier = [toolbarItem itemIdentifier];
+    NSString *itemIdentifier = toolbarItem.itemIdentifier;
     
     if ( [itemIdentifier isEqualToString:SMALLER_TEXT_TOOL_ID] ) {
-	return [_contentsView canMakeTextSmaller];
+        return _contentsView.canMakeTextSmaller;
     }
     else if ( [itemIdentifier isEqualToString:BIGGER_TEXT_TOOL_ID] ) {
-	return [_contentsView canMakeTextLarger];
+        return _contentsView.canMakeTextLarger;
     }
     
     return YES;
@@ -386,11 +385,11 @@ static NSString *const HISTORY_TOOL_ID = @"chmox.history";
 - (BOOL) respondsToSelector: (SEL) aSelector
 {
     BOOL result = [super respondsToSelector: aSelector];
-
+    
     if( !result ) {
         NSLog( @"Tested for selector %s", (char *) aSelector );
     }
-
+    
     return result;
 }
 
